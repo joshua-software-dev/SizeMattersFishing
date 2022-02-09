@@ -6,13 +6,6 @@ using System;
 
 namespace SizeMattersFishing.Spearfishing;
 
-internal enum SpearfishingRow
-{
-    Row01,
-    Row02,
-    Row03
-}
-
 public class FishPositions : IFishPositions
 {
     private readonly GameGui _gameGui;
@@ -36,8 +29,20 @@ public class FishPositions : IFishPositions
                 _ => throw new ArgumentOutOfRangeException(nameof(row), row, null)
             };
 
-            var fish = spearfishingAddon->AtkUnitBase.UldManager.NodeList[position];
-            return (fish->X, fish->Y);
+            if 
+            (
+                spearfishingAddon->AtkUnitBase.UldManager.NodeList != null && 
+                spearfishingAddon->AtkUnitBase.UldManager.NodeListCount >= position
+            )
+            {
+                var fishContainer = spearfishingAddon->AtkUnitBase.UldManager.NodeList[position];
+                if (fishContainer != null)
+                {
+                    return (fishContainer->X, fishContainer->Y);
+                }
+            }
+
+            return null;
         }
     }
 
@@ -45,14 +50,38 @@ public class FishPositions : IFishPositions
     {
         var previousX = row switch
         {
-            SpearfishingRow.Row01 => _lastRow01Pos.X,
-            SpearfishingRow.Row02 => _lastRow02Pos.X,
-            SpearfishingRow.Row03 => _lastRow03Pos.X,
+            SpearfishingRow.Row01 => _lastPositionRow01.X,
+            SpearfishingRow.Row02 => _lastPositionRow02.X,
+            SpearfishingRow.Row03 => _lastPositionRow03.X,
             _ => throw new ArgumentOutOfRangeException(nameof(row), row, null)
         };
 
         var currentPos = GetFishPosFromRow(row);
         if (currentPos == null) return null;
+
+        switch (row)
+        {
+            case SpearfishingRow.Row01:
+            {
+                _lastPositionRow01 = currentPos.Value;
+                break;
+            }
+            case SpearfishingRow.Row02:
+            {
+                _lastPositionRow02 = currentPos.Value;
+                break;
+            }
+            case SpearfishingRow.Row03:
+            {
+                _lastPositionRow03 = currentPos.Value;
+                break;
+            }
+            default:
+            {
+                throw new ArgumentOutOfRangeException(nameof(row), row, null);
+            }
+        }
+
         var currentX = currentPos.Value.X;
 
         var xDelta = previousX > currentX 
@@ -83,10 +112,20 @@ public class FishPositions : IFishPositions
                 _ => throw new ArgumentOutOfRangeException(nameof(row), row, null)
             };
 
-            var fishContainer = spearfishingAddon->AtkUnitBase.UldManager.NodeList[position];
-            if (!fishContainer->IsVisible) return null;
+            if 
+            (
+                spearfishingAddon->AtkUnitBase.UldManager.NodeList == null ||
+                spearfishingAddon->AtkUnitBase.UldManager.NodeList[position] == null ||
+                !spearfishingAddon->AtkUnitBase.UldManager.NodeList[position]->IsVisible
+            )
+            {
+                return null;
+            }
 
+            var fishContainer = spearfishingAddon->AtkUnitBase.UldManager.NodeList[position];
             var fishContainerNodeList = fishContainer->GetAsAtkComponentNode()->Component->UldManager.NodeList;
+            if (fishContainerNodeList == null) return null;
+
             for (var i = 0; i < 7; i++)
             {
                 var fish = fishContainerNodeList[i];
@@ -110,7 +149,7 @@ public class FishPositions : IFishPositions
         }
     }
 
-    private (double X, double Y) _lastRow01Pos = (0, 0);
+    private (double X, double Y) _lastPositionRow01 = (0, 0);
     public (double X, double Y)? FishPositionRow01
     {
         get
@@ -118,14 +157,14 @@ public class FishPositions : IFishPositions
             var pos = GetFishPosFromRow(SpearfishingRow.Row01);
             if (pos != null)
             {
-                _lastRow01Pos = pos.Value;
+                _lastPositionRow01 = pos.Value;
             }
 
             return pos;
         }
     }
 
-    private (double X, double Y) _lastRow02Pos = (0, 0);
+    private (double X, double Y) _lastPositionRow02 = (0, 0);
     public (double X, double Y)? FishPositionRow02
     {
         get
@@ -133,14 +172,14 @@ public class FishPositions : IFishPositions
             var pos = GetFishPosFromRow(SpearfishingRow.Row02);
             if (pos != null)
             {
-                _lastRow02Pos = pos.Value;
+                _lastPositionRow02 = pos.Value;
             }
 
             return pos;
         }
     }
 
-    private (double X, double Y) _lastRow03Pos = (0, 0);
+    private (double X, double Y) _lastPositionRow03 = (0, 0);
     public (double X, double Y)? FishPositionRow03
     {
         get
@@ -148,20 +187,20 @@ public class FishPositions : IFishPositions
             var pos = GetFishPosFromRow(SpearfishingRow.Row03);
             if (pos != null)
             {
-                _lastRow03Pos = pos.Value;
+                _lastPositionRow03 = pos.Value;
             }
 
             return pos;
         }
     }
 
-    public double? FishPositionRow01XDelta => 
+    public double? FishPositionXDeltaRow01 => 
         GetFishPosXDeltaFromRow(SpearfishingRow.Row01);
 
-    public double? FishPositionRow02XDelta => 
+    public double? FishPositionXDeltaRow02 => 
         GetFishPosXDeltaFromRow(SpearfishingRow.Row02);
 
-    public double? FishPositionRow03XDelta => 
+    public double? FishPositionXDeltaRow03 => 
         GetFishPosXDeltaFromRow(SpearfishingRow.Row03);
 
     public FishSize? FishSizeRow01 =>

@@ -1,6 +1,7 @@
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using SizeMattersFishingLib.GUI;
+using SizeMattersFishingLib.Spearfishing;
 using System.Numerics;
 
 
@@ -8,12 +9,6 @@ namespace SizeMattersFishing.GUI;
 
 public class DalamudOverlayWindow : Window, IGuiWindow
 {
-    public string DrawValue
-    {
-        get => _overlayUi.DrawValue; 
-        set => _overlayUi.DrawValue = value;
-    }
-
     private readonly OverlayUserInterface _overlayUi;
     private const ImGuiWindowFlags WindowFlagsVal = ImGuiWindowFlags.NoNav |
                                                     ImGuiWindowFlags.NoNavFocus |
@@ -27,9 +22,9 @@ public class DalamudOverlayWindow : Window, IGuiWindow
                                                     ImGuiWindowFlags.NoMove |
                                                     ImGuiWindowFlags.NoTitleBar;
 
-    public DalamudOverlayWindow(string name) : base(name)
+    public DalamudOverlayWindow(string name, ISpearfishingData spearData, SpearfishingRow row) : base(name)
     {
-        _overlayUi = new OverlayUserInterface();
+        _overlayUi = new OverlayUserInterface(spearData, row);
         
         var fontScale = ImGui.GetIO().FontGlobalScale;
         var startWindowSize = new Vector2(50 * fontScale, 50 * fontScale);

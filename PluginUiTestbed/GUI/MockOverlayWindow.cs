@@ -1,17 +1,13 @@
 using ImGuiNET;
 using SizeMattersFishingLib.GUI;
 using System.Numerics;
+using SizeMattersFishingLib.Spearfishing;
 
 
 namespace PluginUiTestbed.GUI;
 
 public class MockOverlayWindow : IGuiWindow
 {
-    public string DrawValue
-    {
-        get => _overlayUi.DrawValue; 
-        set => _overlayUi.DrawValue = value;
-    }
     public bool IsOpen { get; set; }
     public Vector2 Position { get; set; }
 
@@ -31,9 +27,9 @@ public class MockOverlayWindow : IGuiWindow
                                                     ImGuiWindowFlags.NoMove |
                                                     ImGuiWindowFlags.NoTitleBar;
 
-    public MockOverlayWindow(string header)
+    public MockOverlayWindow(string header, ISpearfishingData spearData, SpearfishingRow row)
     {
-        _overlayUi = new OverlayUserInterface();
+        _overlayUi = new OverlayUserInterface(spearData, row);
 
         var fontScale = ImGui.GetIO().FontGlobalScale;
         StartWindowSize = new Vector2(50 * fontScale, 50 * fontScale);

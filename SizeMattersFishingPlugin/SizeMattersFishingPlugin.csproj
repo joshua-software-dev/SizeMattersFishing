@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+    <Import Project="../Version/Version.csproj" />
     <PropertyGroup>
         <TargetFramework>net5.0-windows</TargetFramework>
         <LangVersion>10.0</LangVersion>
@@ -64,7 +65,13 @@
     </ItemGroup>
 
     <Target Name="SetSourceRevisionId" BeforeTargets="InitializeSourceControlInformation">
-        <Exec Command="git describe --long --always --dirty --exclude=* --abbrev=40" ConsoleToMSBuild="True" IgnoreExitCode="False" StandardErrorImportance="low" StandardOutputImportance="low">
+        <Exec 
+            Command="git describe --long --always --dirty --exclude=* --abbrev=40" 
+            ConsoleToMSBuild="True" 
+            IgnoreExitCode="False" 
+            StandardErrorImportance="low" 
+            StandardOutputImportance="low"
+        >
             <Output PropertyName="SourceRevisionId" TaskParameter="ConsoleOutput" />
         </Exec>
     </Target>
