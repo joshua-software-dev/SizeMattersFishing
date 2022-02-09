@@ -1,2 +1,2 @@
 # SizeMattersFishing
-Help label fish when spearfishing in FFXIV.
+Help label fish while spearfishing in FFXIV.

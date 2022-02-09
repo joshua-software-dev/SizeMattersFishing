@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="../Version/Version.csproj" />
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <LangVersion>10.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <Optimize>true</Optimize>
+        
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AssemblyFileVersion>$(PluginVersion)</AssemblyFileVersion>
+        <DalamudLibPath>../deps/lib/dalamud/</DalamudLibPath>
+        <FileVersion>$(PluginVersion)</FileVersion>
+        <IsPublishable>false</IsPublishable>
+        <Version>$(PluginVersion)</Version>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DebugType>full</DebugType>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <AssemblySearchPaths>
+            $(AssemblySearchPaths);
+            $(DalamudLibPath);
+        </AssemblySearchPaths>
+    </PropertyGroup>
+    
+    <Target Name="DownloadDalamudDependencies" BeforeTargets="CollectPackageReferences">
+        <DownloadFile Condition="!Exists('../deps/lib/dalamud/ImGui.NET.dll')" DestinationFolder="../deps/lib/dalamud/" SourceUrl="https://goatcorp.github.io/dalamud-distrib/latest.zip" />
+    </Target>
+
+    <Target Name="UnzipDalamud" AfterTargets="DownloadDalamudDependencies">
+        <Unzip Condition="!Exists('../deps/lib/dalamud/ImGui.NET.dll')" DestinationFolder="../deps/lib/dalamud/" SourceFiles="../deps/lib/dalamud/latest.zip" />
+    </Target>
+    
+    <ItemGroup>
+        <Reference Include="ImGui.NET">
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+</Project>

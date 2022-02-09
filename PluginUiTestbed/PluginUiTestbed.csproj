@@ -1,0 +1,110 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="../Version/Version.csproj" />
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Platform>x64</Platform>
+        <LangVersion>10.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <Optimize>true</Optimize>
+
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AssemblyFileVersion>$(PluginVersion)</AssemblyFileVersion>
+        <DalamudLibPath>../deps/lib/dalamud/</DalamudLibPath>
+        <FileVersion>$(PluginVersion)</FileVersion>
+        <IsPublishable>false</IsPublishable>
+        <OutputType>Exe</OutputType>
+        <Version>$(PluginVersion)</Version>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$([MSBuild]::IsOsPlatform(Windows))' == 'true'">
+        <OutputType>WinExe</OutputType>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'RELEASE'">
+        <TrimUnusedDependencies>true</TrimUnusedDependencies>
+    </PropertyGroup>
+
+    <Target Name="DownloadImGuiNativeDependencies" AfterTargets="Compile">
+        <DownloadFile Condition="&#xA;                !Exists('../deps/lib/cimgui/linux-x64/cimgui.so')&#xA;                And&#xA;                ('$([MSBuild]::IsOsPlatform(Linux))' == 'true' Or '$(RuntimeIdentifier)' == 'linux-x64')" DestinationFolder="../deps/lib/cimgui/linux-x64/" SourceUrl="https://github.com/mellinoe/ImGui.NET-nativebuild/releases/latest/download/cimgui.so" />
+        <DownloadFile Condition="&#xA;                !Exists('../deps/lib/cimgui/osx-x64/cimgui.dylib')&#xA;                And&#xA;                ('$([MSBuild]::IsOsPlatform(OSX))' == 'true' Or '$(RuntimeIdentifier)' == 'osx-x64')" DestinationFolder="../deps/lib/cimgui/osx-x64/" SourceUrl="https://github.com/mellinoe/ImGui.NET-nativebuild/releases/latest/download/cimgui.dylib" />
+        <DownloadFile Condition="&#xA;                !Exists('../deps/lib/cimgui/win-x64/cimgui.dll')&#xA;                And&#xA;                ('$([MSBuild]::IsOsPlatform(Windows))' == 'true' Or '$(RuntimeIdentifier)' == 'win-x64')" DestinationFolder="../deps/lib/cimgui/win-x64/" SourceUrl="https://github.com/mellinoe/ImGui.NET-nativebuild/releases/latest/download/cimgui.win-x64.dll" />
+    </Target>
+    
+    <PropertyGroup>
+        <AssemblySearchPaths>
+            $(AssemblySearchPaths);
+            $(DalamudLibPath);
+        </AssemblySearchPaths>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+        <PackageReference Include="Veldrid" Version="4.8.0" />
+        <PackageReference Include="Veldrid.ImageSharp" Version="4.8.0" />
+        <PackageReference Include="Veldrid.StartupUtilities" Version="4.8.0" />
+        <Reference Include="ImGui.NET">
+            <Private>true</Private>
+        </Reference>
+        <ProjectReference Include="../SizeMattersFishingLib/SizeMattersFishingLib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="..\deps\fonts\gamesym.ttf">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        <Content Include="..\deps\fonts\NotoSansCJKjp-Medium.otf">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>false</Visible>
+        </Content>
+        <Content Condition="'$([MSBuild]::IsOsPlatform(Linux))' == 'true' Or '$(RuntimeIdentifier)' == 'linux-x64'" Include="../deps/lib/cimgui/linux-x64/cimgui.so">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>cimgui.so</Link>
+            <Visible>true</Visible>
+        </Content>
+        <Content Condition="'$([MSBuild]::IsOsPlatform(OSX))' == 'true' Or '$(RuntimeIdentifier)' == 'osx-x64'" Include="../deps/lib/cimgui/osx-x64/cimgui.dylib">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>cimgui.dylib</Link>
+            <Visible>true</Visible>
+        </Content>
+        <Content Condition="'$([MSBuild]::IsOsPlatform(Windows))' == 'true' Or '$(RuntimeIdentifier)' == 'win-x64'" Include="../deps/lib/cimgui/win-x64/cimgui.win-x64.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>cimgui.dll</Link>
+            <Visible>true</Visible>
+        </Content>
+        <EmbeddedResource Include="../deps/shaders/GLSL/imgui-vertex.glsl">
+            <LogicalName>imgui-vertex.glsl</LogicalName>
+            <Visible>false</Visible>
+        </EmbeddedResource>
+        <EmbeddedResource Include="../deps/shaders/GLSL/imgui-frag.glsl">
+            <LogicalName>imgui-frag.glsl</LogicalName>
+            <Visible>false</Visible>
+        </EmbeddedResource>
+        <EmbeddedResource Include="../deps/shaders/HLSL/imgui-vertex.hlsl.bytes">
+            <LogicalName>imgui-vertex.hlsl.bytes</LogicalName>
+            <Visible>false</Visible>
+        </EmbeddedResource>
+        <EmbeddedResource Include="../deps/shaders/HLSL/imgui-frag.hlsl.bytes">
+            <LogicalName>imgui-frag.hlsl.bytes</LogicalName>
+            <Visible>false</Visible>
+        </EmbeddedResource>
+        <EmbeddedResource Include="../deps/shaders/SPIR-V/imgui-vertex.spv">
+            <LogicalName>imgui-vertex.spv</LogicalName>
+            <Visible>false</Visible>
+        </EmbeddedResource>
+        <EmbeddedResource Include="../deps/shaders/SPIR-V/imgui-frag.spv">
+            <LogicalName>imgui-frag.spv</LogicalName>
+            <Visible>false</Visible>
+        </EmbeddedResource>
+        <EmbeddedResource Include="../deps/shaders/Metal/imgui-vertex.metallib">
+            <LogicalName>imgui-vertex.metallib</LogicalName>
+            <Visible>false</Visible>
+        </EmbeddedResource>
+        <EmbeddedResource Include="../deps/shaders/Metal/imgui-frag.metallib">
+            <LogicalName>imgui-frag.metallib</LogicalName>
+            <Visible>false</Visible>
+        </EmbeddedResource>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0-windows</TargetFramework>
+        <LangVersion>10.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <Optimize>true</Optimize>
+        
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AssemblyFileVersion>$(PluginVersion)</AssemblyFileVersion>
+        <AssemblyName>SizeMattersFishing</AssemblyName>
+        <AssemblyTitle>Size Matters Fishing</AssemblyTitle>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <DalamudLibPath>../deps/lib/dalamud/</DalamudLibPath>
+        <Description>Tell fish apart while spearfishing!</Description>
+        <FileVersion>$(PluginVersion)</FileVersion>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <NoWarn>CA1416</NoWarn>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <OutputType>Library</OutputType>
+        <RootNamespace>SizeMattersFishing</RootNamespace>
+        <Version>$(PluginVersion)</Version>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug'">
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <AssemblySearchPaths>
+            $(AssemblySearchPaths);
+            $(DalamudLibPath);
+        </AssemblySearchPaths>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\SizeMattersFishingLib\SizeMattersFishingLib.csproj" />
+        <PackageReference Include="DalamudPackager" Version="2.1.5" />
+        <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+        <Reference Include="Dalamud">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="FFXIVClientStructs">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="ImGui.NET">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Lumina">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Lumina.Excel">
+            <Private>false</Private>
+        </Reference>
+        <Content Include="SizeMattersFishing.json" />
+    </ItemGroup>
+
+    <Target Name="SetSourceRevisionId" BeforeTargets="InitializeSourceControlInformation">
+        <Exec Command="git describe --long --always --dirty --exclude=* --abbrev=40" ConsoleToMSBuild="True" IgnoreExitCode="False" StandardErrorImportance="low" StandardOutputImportance="low">
+            <Output PropertyName="SourceRevisionId" TaskParameter="ConsoleOutput" />
+        </Exec>
+    </Target>
+
+</Project>

@@ -1,0 +1,11 @@
+bin/
+bin/*
+obj/
+obj/*
+.idea/
+.idea/*
+.vscode/
+.vscode/*
+SizeMattersFishing.sln.DotSettings.user
+deps/lib/
+deps/lib/*
