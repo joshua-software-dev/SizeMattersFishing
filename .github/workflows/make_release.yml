@@ -1,4 +1,4 @@
-name: .NET
+name: Make Release
 
 on:
   workflow_dispatch: 
