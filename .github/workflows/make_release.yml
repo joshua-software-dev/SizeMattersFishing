@@ -10,10 +10,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Restore dependencies
         run: dotnet restore
-      - name: Publish and Upload
+      - name: Publish
         id: vars
         run: ./publish.sh
       - uses: "marvinpinto/action-automatic-releases@latest"
+        name: Make Release
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
