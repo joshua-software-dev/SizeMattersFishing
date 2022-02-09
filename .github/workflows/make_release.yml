@@ -1,0 +1,24 @@
+name: .NET
+
+on:
+  workflow_dispatch: 
+jobs:
+  publish_to_prod:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Publish and Upload
+        id: vars
+        run: ./publish.sh
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "${{ steps.vars.outputs.plugin_version }}"
+          files: |
+            SizeMattersFishingPlugin/bin/Release/publish/SizeMattersFishing/latest.zip
+            SizeMattersFishingPlugin/bin/Release/publish/SizeMattersFishing/SizeMattersFishing.json
