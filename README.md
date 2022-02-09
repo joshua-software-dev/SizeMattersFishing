@@ -1,4 +1,4 @@
-# SizeMattersFishing
+# Size Matters when Fishing
 
 ![](https://github.com/joshua-software-dev/SizeMattersFishing/blob/master/image/demo.gif)
 
